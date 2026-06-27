@@ -1,5 +1,7 @@
 # monitor-connect-switcher
 
+[![Lint](https://github.com/ow-n/monitor-connect-switcher/actions/workflows/lint.yml/badge.svg)](https://github.com/ow-n/monitor-connect-switcher/actions/workflows/lint.yml)
+
 A single PowerShell script that flips between saved multi-monitor configurations on Windows — instantly enable/disable groups of displays and hand them off to another machine — **without** clicking through Settings > Display.
 
 Built around a 5-monitor 2×3 wall (so a laptop can borrow a column, two columns, or all-but-one on demand), but the design is general: profiles are defined by **screen position**, not hard-coded display IDs, so they survive Windows renumbering your displays after a re-plug.
@@ -152,6 +154,23 @@ Any time you physically change the layout (rearrange cables, drag/rotate monitor
 ```
 
 If your monitors' on-screen arrangement is wrong (all identical panels confuse Windows), use `-Identify`, fix the arrangement with `Set-DisplayRotation` / `Set-DisplayPosition` / `Set-DisplayPrimary` piped into `Use-DisplayConfig -UpdateAdapterIds`, then re-capture.
+
+---
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| `DisplayConfig module not installed` | `Install-Module DisplayConfig -Scope CurrentUser -Force` |
+| Displays look stuck / half-applied after a switch | Open **Settings > System > Display**, nudge any monitor, hit **Apply**, then re-run the profile. The CCD apply is atomic, but a wedged driver state occasionally needs one manual nudge. |
+| A profile keeps the **wrong** monitors | Your DisplayIds renumbered (happens on any add / remove / re-plug). Run `-Identify` to see the live mapping, then `-Capture five` to refresh the baseline. |
+| A disabled monitor won't come back | `.\monitor-profile.ps1 -Profile five` re-enables everything from the baseline snapshot. |
+| `Baseline five.xml not found` | Capture it first: `.\monitor-profile.ps1 -Capture five`. |
+| Columns look wrong / handoff frees the wrong side | The column math divides each display's X by the panel width (`3440`). If your panels aren't 3440 px wide, edit that divisor (see [Adapting it to your setup](#adapting-it-to-your-setup)) and re-capture. |
+| `-Identify` overlay won't dismiss | Click any screen or press **Esc**; it also auto-closes after 60 seconds. |
+| `.ps1 cannot be loaded because running scripts is disabled` | Use the `.bat` wrappers (they pass `-ExecutionPolicy Bypass`), or run `powershell -ExecutionPolicy Bypass -File .\monitor-profile.ps1 -Profile five`. |
+
+> If an apply errors out, the script prints the current display state so you can see what actually happened, and it promotes a kept display to primary **before** disabling any others — so it never strands you with the primary display turned off.
 
 ---
 

@@ -1,6 +1,6 @@
 # monitor-profile.ps1
 # Switch between saved monitor profiles using the DisplayConfig PowerShell module
-# (wraps Windows CCD APIs — same engine that Settings > System > Display uses).
+# (wraps Windows CCD APIs - same engine that Settings > System > Display uses).
 #
 # Usage:
 #   .\monitor-profile.ps1 -Profile five
