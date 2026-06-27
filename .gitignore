@@ -1,0 +1,11 @@
+# Machine-specific display snapshots — these are generated per-machine and will
+# NOT work on another rig (DisplayIds, adapter GUIDs, and geometry differ).
+# Regenerate on each machine with:  .\monitor-profile.ps1 -Capture five
+profiles/*.xml
+profiles/positions.json
+
+# Legacy MultiMonitorTool — its /disable and /enable are dead on Windows 11 24H2
+# (legacy ChangeDisplaySettingsEx API). Kept locally only for /scomma enumeration.
+MultiMonitorTool.exe
+MultiMonitorTool.cfg
+*.mmt-backup
